@@ -7,23 +7,23 @@ part of 'moor_database.dart';
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
-class Post extends DataClass implements Insertable<Post> {
+class Poste extends DataClass implements Insertable<Poste> {
   final String title;
   final int id;
   final String body;
   final bool isSaved;
-  Post(
+  Poste(
       {@required this.title,
       @required this.id,
       @required this.body,
       @required this.isSaved});
-  factory Post.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+  factory Poste.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     final intType = db.typeSystem.forDartType<int>();
     final boolType = db.typeSystem.forDartType<bool>();
-    return Post(
+    return Poste(
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -50,8 +50,8 @@ class Post extends DataClass implements Insertable<Post> {
     return map;
   }
 
-  PostsCompanion toCompanion(bool nullToAbsent) {
-    return PostsCompanion(
+  PostesCompanion toCompanion(bool nullToAbsent) {
+    return PostesCompanion(
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
@@ -62,10 +62,10 @@ class Post extends DataClass implements Insertable<Post> {
     );
   }
 
-  factory Post.fromJson(Map<String, dynamic> json,
+  factory Poste.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
-    return Post(
+    return Poste(
       title: serializer.fromJson<String>(json['title']),
       id: serializer.fromJson<int>(json['id']),
       body: serializer.fromJson<String>(json['body']),
@@ -83,7 +83,7 @@ class Post extends DataClass implements Insertable<Post> {
     };
   }
 
-  Post copyWith({String title, int id, String body, bool isSaved}) => Post(
+  Poste copyWith({String title, int id, String body, bool isSaved}) => Poste(
         title: title ?? this.title,
         id: id ?? this.id,
         body: body ?? this.body,
@@ -91,7 +91,7 @@ class Post extends DataClass implements Insertable<Post> {
       );
   @override
   String toString() {
-    return (StringBuffer('Post(')
+    return (StringBuffer('Poste(')
           ..write('title: $title, ')
           ..write('id: $id, ')
           ..write('body: $body, ')
@@ -106,32 +106,32 @@ class Post extends DataClass implements Insertable<Post> {
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Post &&
+      (other is Poste &&
           other.title == this.title &&
           other.id == this.id &&
           other.body == this.body &&
           other.isSaved == this.isSaved);
 }
 
-class PostsCompanion extends UpdateCompanion<Post> {
+class PostesCompanion extends UpdateCompanion<Poste> {
   final Value<String> title;
   final Value<int> id;
   final Value<String> body;
   final Value<bool> isSaved;
-  const PostsCompanion({
+  const PostesCompanion({
     this.title = const Value.absent(),
     this.id = const Value.absent(),
     this.body = const Value.absent(),
     this.isSaved = const Value.absent(),
   });
-  PostsCompanion.insert({
+  PostesCompanion.insert({
     @required String title,
     this.id = const Value.absent(),
     @required String body,
     this.isSaved = const Value.absent(),
   })  : title = Value(title),
         body = Value(body);
-  static Insertable<Post> custom({
+  static Insertable<Poste> custom({
     Expression<String> title,
     Expression<int> id,
     Expression<String> body,
@@ -145,12 +145,12 @@ class PostsCompanion extends UpdateCompanion<Post> {
     });
   }
 
-  PostsCompanion copyWith(
+  PostesCompanion copyWith(
       {Value<String> title,
       Value<int> id,
       Value<String> body,
       Value<bool> isSaved}) {
-    return PostsCompanion(
+    return PostesCompanion(
       title: title ?? this.title,
       id: id ?? this.id,
       body: body ?? this.body,
@@ -178,7 +178,7 @@ class PostsCompanion extends UpdateCompanion<Post> {
 
   @override
   String toString() {
-    return (StringBuffer('PostsCompanion(')
+    return (StringBuffer('PostesCompanion(')
           ..write('title: $title, ')
           ..write('id: $id, ')
           ..write('body: $body, ')
@@ -188,10 +188,10 @@ class PostsCompanion extends UpdateCompanion<Post> {
   }
 }
 
-class $PostsTable extends Posts with TableInfo<$PostsTable, Post> {
+class $PostesTable extends Postes with TableInfo<$PostesTable, Poste> {
   final GeneratedDatabase _db;
   final String _alias;
-  $PostsTable(this._db, [this._alias]);
+  $PostesTable(this._db, [this._alias]);
   final VerificationMeta _titleMeta = const VerificationMeta('title');
   GeneratedTextColumn _title;
   @override
@@ -237,13 +237,13 @@ class $PostsTable extends Posts with TableInfo<$PostsTable, Post> {
   @override
   List<GeneratedColumn> get $columns => [title, id, body, isSaved];
   @override
-  $PostsTable get asDslTable => this;
+  $PostesTable get asDslTable => this;
   @override
-  String get $tableName => _alias ?? 'posts';
+  String get $tableName => _alias ?? 'postes';
   @override
-  final String actualTableName = 'posts';
+  final String actualTableName = 'postes';
   @override
-  VerificationContext validateIntegrity(Insertable<Post> instance,
+  VerificationContext validateIntegrity(Insertable<Poste> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -272,23 +272,23 @@ class $PostsTable extends Posts with TableInfo<$PostsTable, Post> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Post map(Map<String, dynamic> data, {String tablePrefix}) {
+  Poste map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Post.fromData(data, _db, prefix: effectivePrefix);
+    return Poste.fromData(data, _db, prefix: effectivePrefix);
   }
 
   @override
-  $PostsTable createAlias(String alias) {
-    return $PostsTable(_db, alias);
+  $PostesTable createAlias(String alias) {
+    return $PostesTable(_db, alias);
   }
 }
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  $PostsTable _posts;
-  $PostsTable get posts => _posts ??= $PostsTable(this);
+  $PostesTable _postes;
+  $PostesTable get postes => _postes ??= $PostesTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [posts];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [postes];
 }
