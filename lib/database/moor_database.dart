@@ -3,8 +3,8 @@ import 'package:moor_flutter/moor_flutter.dart';
 part 'moor_database.g.dart';
 
 class Postes extends Table {
-  TextColumn get title => text()();
   IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
   TextColumn get body => text()();
   BoolColumn get isSaved => boolean().withDefault(Constant(false))();
 }
@@ -13,6 +13,8 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase()
       : super(FlutterQueryExecutor.inDatabaseFolder(
       path: "db.sqlite", logStatements: true));
+
+  @override
   int get schemaVersion => 1;
 
   // Future<List<Task>>

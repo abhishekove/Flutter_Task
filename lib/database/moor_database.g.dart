@@ -8,25 +8,25 @@ part of 'moor_database.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Poste extends DataClass implements Insertable<Poste> {
-  final String title;
   final int id;
+  final String title;
   final String body;
   final bool isSaved;
   Poste(
-      {@required this.title,
-      @required this.id,
+      {@required this.id,
+      @required this.title,
       @required this.body,
       @required this.isSaved});
   factory Poste.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final stringType = db.typeSystem.forDartType<String>();
     final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
     final boolType = db.typeSystem.forDartType<bool>();
     return Poste(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       body: stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
       isSaved:
           boolType.mapFromDatabaseResponse(data['${effectivePrefix}is_saved']),
@@ -35,11 +35,11 @@ class Poste extends DataClass implements Insertable<Poste> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || title != null) {
-      map['title'] = Variable<String>(title);
-    }
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
     }
     if (!nullToAbsent || body != null) {
       map['body'] = Variable<String>(body);
@@ -52,9 +52,9 @@ class Poste extends DataClass implements Insertable<Poste> {
 
   PostesCompanion toCompanion(bool nullToAbsent) {
     return PostesCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       body: body == null && nullToAbsent ? const Value.absent() : Value(body),
       isSaved: isSaved == null && nullToAbsent
           ? const Value.absent()
@@ -66,8 +66,8 @@ class Poste extends DataClass implements Insertable<Poste> {
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Poste(
-      title: serializer.fromJson<String>(json['title']),
       id: serializer.fromJson<int>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
       body: serializer.fromJson<String>(json['body']),
       isSaved: serializer.fromJson<bool>(json['isSaved']),
     );
@@ -76,24 +76,24 @@ class Poste extends DataClass implements Insertable<Poste> {
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'title': serializer.toJson<String>(title),
       'id': serializer.toJson<int>(id),
+      'title': serializer.toJson<String>(title),
       'body': serializer.toJson<String>(body),
       'isSaved': serializer.toJson<bool>(isSaved),
     };
   }
 
-  Poste copyWith({String title, int id, String body, bool isSaved}) => Poste(
-        title: title ?? this.title,
+  Poste copyWith({int id, String title, String body, bool isSaved}) => Poste(
         id: id ?? this.id,
+        title: title ?? this.title,
         body: body ?? this.body,
         isSaved: isSaved ?? this.isSaved,
       );
   @override
   String toString() {
     return (StringBuffer('Poste(')
-          ..write('title: $title, ')
           ..write('id: $id, ')
+          ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('isSaved: $isSaved')
           ..write(')'))
@@ -101,58 +101,58 @@ class Poste extends DataClass implements Insertable<Poste> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(title.hashCode,
-      $mrjc(id.hashCode, $mrjc(body.hashCode, isSaved.hashCode))));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(title.hashCode, $mrjc(body.hashCode, isSaved.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Poste &&
-          other.title == this.title &&
           other.id == this.id &&
+          other.title == this.title &&
           other.body == this.body &&
           other.isSaved == this.isSaved);
 }
 
 class PostesCompanion extends UpdateCompanion<Poste> {
-  final Value<String> title;
   final Value<int> id;
+  final Value<String> title;
   final Value<String> body;
   final Value<bool> isSaved;
   const PostesCompanion({
-    this.title = const Value.absent(),
     this.id = const Value.absent(),
+    this.title = const Value.absent(),
     this.body = const Value.absent(),
     this.isSaved = const Value.absent(),
   });
   PostesCompanion.insert({
-    @required String title,
     this.id = const Value.absent(),
+    @required String title,
     @required String body,
     this.isSaved = const Value.absent(),
   })  : title = Value(title),
         body = Value(body);
   static Insertable<Poste> custom({
-    Expression<String> title,
     Expression<int> id,
+    Expression<String> title,
     Expression<String> body,
     Expression<bool> isSaved,
   }) {
     return RawValuesInsertable({
-      if (title != null) 'title': title,
       if (id != null) 'id': id,
+      if (title != null) 'title': title,
       if (body != null) 'body': body,
       if (isSaved != null) 'is_saved': isSaved,
     });
   }
 
   PostesCompanion copyWith(
-      {Value<String> title,
-      Value<int> id,
+      {Value<int> id,
+      Value<String> title,
       Value<String> body,
       Value<bool> isSaved}) {
     return PostesCompanion(
-      title: title ?? this.title,
       id: id ?? this.id,
+      title: title ?? this.title,
       body: body ?? this.body,
       isSaved: isSaved ?? this.isSaved,
     );
@@ -161,11 +161,11 @@ class PostesCompanion extends UpdateCompanion<Poste> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
-    }
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
     }
     if (body.present) {
       map['body'] = Variable<String>(body.value);
@@ -179,8 +179,8 @@ class PostesCompanion extends UpdateCompanion<Poste> {
   @override
   String toString() {
     return (StringBuffer('PostesCompanion(')
-          ..write('title: $title, ')
           ..write('id: $id, ')
+          ..write('title: $title, ')
           ..write('body: $body, ')
           ..write('isSaved: $isSaved')
           ..write(')'))
@@ -192,6 +192,15 @@ class $PostesTable extends Postes with TableInfo<$PostesTable, Poste> {
   final GeneratedDatabase _db;
   final String _alias;
   $PostesTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
   final VerificationMeta _titleMeta = const VerificationMeta('title');
   GeneratedTextColumn _title;
   @override
@@ -202,15 +211,6 @@ class $PostesTable extends Postes with TableInfo<$PostesTable, Poste> {
       $tableName,
       false,
     );
-  }
-
-  final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
-  @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _bodyMeta = const VerificationMeta('body');
@@ -235,7 +235,7 @@ class $PostesTable extends Postes with TableInfo<$PostesTable, Poste> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [title, id, body, isSaved];
+  List<GeneratedColumn> get $columns => [id, title, body, isSaved];
   @override
   $PostesTable get asDslTable => this;
   @override
@@ -247,14 +247,14 @@ class $PostesTable extends Postes with TableInfo<$PostesTable, Poste> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
     if (data.containsKey('title')) {
       context.handle(
           _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
-    }
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
     if (data.containsKey('body')) {
       context.handle(

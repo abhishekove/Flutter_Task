@@ -39,51 +39,75 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  List<Poste> post=new List();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Check"),
+        actions: [
+          IconButton(icon: Icon(Icons.list), onPressed: _push),
+        ],
       ),
       body: _buildBody(context),
     );
   }
+  void _push(){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+  }
+  FutureBuilder<Response> _buildBody(BuildContext context){
+    return FutureBuilder<Response>(
+      future: Provider.of<PosApiService>(context).getPoss(),
+      builder: (context,snapshot){
+        if(snapshot.connectionState==ConnectionState.done){
+          final List posts=json.decode(snapshot.data.bodyString);
+
+          for(int i=0;i<posts.length;i++){
+            // Poste task= Poste(title: posts[i]['title'], id: i, body: posts[i]['body'], isSaved: false);
+            post.add(new Poste(title: posts[i]['title'], body: posts[i]['body'], isSaved: false));
+          }
+          return _buildPost(context,post);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+  ListView _buildPost(BuildContext context,List<Poste> posts){
+    return ListView.builder(
+      itemCount: posts.length,
+      padding: EdgeInsets.all(8),
+      itemBuilder: (context,index){
+        var saved=posts[index].isSaved;
+        return ListTile(
+          title: Text(
+              posts[index].title
+          ),
+          subtitle: Text(
+              posts[index].body
+          ),
+          trailing: Icon(
+            saved ? Icons.favorite:Icons.favorite_border,
+            color: saved ? Colors.red : null,
+          ),
+          onTap: (){
+            setState(() {
+              saved=true;
+            });
+            _save(index);
+          },
+        );
+      },
+    );
+  }
+  void _save(int i){
+    final database = Provider.of<AppDatabase>(context);
+    database.insertTask(new Poste(title: post[i].title, body: post[i].body, isSaved: true));
+  }
 }
 
-FutureBuilder<Response> _buildBody(BuildContext context){
-  return FutureBuilder<Response>(
-    future: Provider.of<PosApiService>(context).getPoss(),
-    builder: (context,snapshot){
-      if(snapshot.connectionState==ConnectionState.done){
-        final List posts=json.decode(snapshot.data.bodyString);
-        return _buildPost(context,posts);
-      }
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    },
-  );
-}
-ListView _buildPost(BuildContext context,List posts){
-  return ListView.builder(
-    itemCount: posts.length,
-    padding: EdgeInsets.all(8),
-    itemBuilder: (context,index){
-      return ListTile(
-        title: Text(
-            posts[index]['title'],
-        ),
-        subtitle: Text(
-          posts[index]['body'],
-        ),
-        trailing: Icon(
-          Icons.favorite_border,
-          color: null,
-        ),
-      );
-    },
-  );
-}
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
