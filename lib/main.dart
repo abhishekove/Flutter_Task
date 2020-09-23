@@ -3,11 +3,18 @@ import 'dart:convert';
 import 'package:chopper/chopper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pos/pos_api_service.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 import 'database/moor_database.dart';
 
+void init(){
+  GetIt.I.registerLazySingleton(() => AppDatabase());
+  GetIt.I.registerLazySingleton(() => PosApiService.create());
+}
+
 void main() {
+  init();
   runApp(MyApp());
 }
 
@@ -18,10 +25,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<AppDatabase>(
-          builder: (_)=>AppDatabase(),
+          builder: (_)=>GetIt.I<AppDatabase>(),
         ),
         Provider<PosApiService>(
-          builder: (_)=>PosApiService.create(),
+          builder: (_)=>GetIt.I<PosApiService>(),
           dispose: (context,PosApiService service)=>service.client.dispose(),
         )
       ],
@@ -62,9 +69,10 @@ class _MainPageState extends State<MainPage> {
         if(snapshot.connectionState==ConnectionState.done){
           final List posts=json.decode(snapshot.data.bodyString);
 
-          for(int i=0;i<posts.length;i++){
-            // Poste task= Poste(title: posts[i]['title'], id: i, body: posts[i]['body'], isSaved: false);
-            post.add(new Poste(title: posts[i]['title'], body: posts[i]['body'], isSaved: false));
+          if(post.length==0){
+            for(int i=0;i<posts.length;i++){
+              post.add(new Poste(title: posts[i]['title'], body: posts[i]['body'], isSaved: false));
+            }
           }
           return _buildPost(context,post);
         }
@@ -92,9 +100,6 @@ class _MainPageState extends State<MainPage> {
             color: saved ? Colors.red : null,
           ),
           onTap: (){
-            setState(() {
-              saved=true;
-            });
             _save(index);
           },
         );
@@ -103,6 +108,10 @@ class _MainPageState extends State<MainPage> {
   }
   void _save(int i){
     final database = Provider.of<AppDatabase>(context);
+    setState(() {
+      post.removeAt(i);
+      post.insert(0,new Poste(title: post[i].title, body: post[i].body, isSaved: true));
+    });
     database.insertTask(new Poste(title: post[i].title, body: post[i].body, isSaved: true));
   }
 }
@@ -146,7 +155,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildListItem(Poste itemTask, AppDatabase database) {
-    final saved=itemTask.isSaved;
     return ListTile(
       title: Text(
         itemTask.title
@@ -154,10 +162,9 @@ class _HomePageState extends State<HomePage> {
       subtitle: Text(
         itemTask.body
       ),
-      trailing: Icon(
-        saved ? Icons.favorite:Icons.favorite_border,
-        color: saved ? Colors.red : null,
-      ),
+      onTap: (){
+          database.deleteTask(itemTask);
+      },
     );
   }
 }
